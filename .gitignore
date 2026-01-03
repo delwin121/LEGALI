@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Data
+backend/data/chroma/
+backend/data/cleaned_text/
+
+# PDFs (optional: keep raw PDFs out if licensed)
+# backend/data/raw_pdfs/
+
+# Docker
+*.log
+
+# OS
+.DS_Store
