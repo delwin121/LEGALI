@@ -4,8 +4,12 @@ __pycache__/
 .venv/
 
 # Data
+backend/data/
 backend/data/chroma/
 backend/data/cleaned_text/
+
+# Virtual Environments
+backend/venv/
 
 # PDFs (optional: keep raw PDFs out if licensed)
 # backend/data/raw_pdfs/

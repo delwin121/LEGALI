@@ -1,0 +1,8 @@
+pdfplumber
+chromadb
+sentence-transformers
+langchain
+requests
+streamlit
+fastapi
+uvicorn

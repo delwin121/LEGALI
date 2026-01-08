@@ -1,0 +1,8 @@
+services:
+  backend:
+    build: ./backend
+    container_name: legali-backend
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
