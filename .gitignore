@@ -2,20 +2,37 @@
 __pycache__/
 *.pyc
 .venv/
+venv/
+env/
+.env
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
 
 # Data
 backend/data/
 backend/data/chroma/
 backend/data/cleaned_text/
-
-# Virtual Environments
-backend/venv/
-
-# PDFs (optional: keep raw PDFs out if licensed)
+# Keep raw PDFs if needed, or ignore
 # backend/data/raw_pdfs/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Docker
 *.log
 
 # OS
 .DS_Store
+Thumbs.db
+
+# Project specifics
+dist/
+build/
+*.egg-info/
