@@ -17,7 +17,7 @@ COLLECTION_NAME = "legali_corpus"
 EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
 # OpenRouter Config
 LLM_MODEL = "meta-llama/llama-3.1-405b-instruct:free"
-FALLBACK_MODEL = "qwen/qwen2.5-coder-7b-instruct:free"
+FALLBACK_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
 LOG_FILE = Path("backend/logs/audit.log")
 
 # Setup Logging
@@ -105,9 +105,9 @@ ANSWER (As a Legal Stenographer):
             return response.choices[0].message.content
         except Exception as e:
             msg = str(e)
-            # Check for Rate Limit or overload
-            if "429" in msg or "overloaded" in msg.lower():
-                print(f"Primary model {LLM_MODEL} overloaded/rate-limited. Switching to fallback...")
+            # Check for Rate Limit, Overload, or Route Error (404)
+            if any(x in msg for x in ["429", "404", "overloaded", "provider"]):
+                print(f"Primary model {LLM_MODEL} failed ({msg}). Switching to fallback...")
                 try:
                     response = call_llm(FALLBACK_MODEL)
                     return response.choices[0].message.content
