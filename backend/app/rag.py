@@ -1,19 +1,23 @@
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
 import chromadb
 from sentence_transformers import SentenceTransformer
-import requests
 import json
 from pathlib import Path
-
 import logging
 import uuid
 import datetime
+
+load_dotenv()  # Load .env
 
 # Config
 DB_DIR = Path("backend/data/chroma_db")
 COLLECTION_NAME = "legali_corpus"
 EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
-LLM_URL = "http://localhost:11434/api/generate"
-LLM_MODEL = "llama3.2:latest"
+# OpenRouter Config
+LLM_MODEL = "meta-llama/llama-3.1-405b-instruct:free"
+FALLBACK_MODEL = "qwen/qwen2.5-coder-7b-instruct:free"
 LOG_FILE = Path("backend/logs/audit.log")
 
 # Setup Logging
@@ -32,6 +36,16 @@ class LegalRAG:
         print(f"Connecting to Vector DB at {DB_DIR}...")
         self.client = chromadb.PersistentClient(path=str(DB_DIR))
         self.collection = self.client.get_collection(COLLECTION_NAME)
+        
+        # Initialize OpenRouter Client
+        api_key = os.getenv("OPENROUTER_API_KEY")
+        if not api_key:
+            print("WARNING: OPENROUTER_API_KEY not found in .env")
+        
+        self.llm_client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key or "dummy"
+        )
         
     def _log(self, trace_id, message):
         extra = {'trace_id': trace_id}
@@ -72,24 +86,35 @@ USER QUESTION:
 ANSWER (As a Legal Stenographer):
 """
         
-        payload = {
-            "model": LLM_MODEL,
-            "prompt": f"{system_prompt}\n{user_prompt}",
-            "stream": False,
-            "options": {
-                "temperature": 0.0  # Deterministic
-            }
-        }
-        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+
+        def call_llm(model_id):
+            return self.llm_client.chat.completions.create(
+                model=model_id,
+                messages=messages,
+                temperature=0.0, # Deterministic
+                max_tokens=2000
+            )
+
         try:
-            resp = requests.post(LLM_URL, json=payload, timeout=300)
-            if resp.status_code == 200:
-                body = resp.json()
-                return body.get("response", "Error: No response")
-            else:
-                return f"Error calling LLM: {resp.status_code} - {resp.text}"
+            # Primary Model
+            response = call_llm(LLM_MODEL)
+            return response.choices[0].message.content
         except Exception as e:
-            return f"Error: {e}"
+            msg = str(e)
+            # Check for Rate Limit or overload
+            if "429" in msg or "overloaded" in msg.lower():
+                print(f"Primary model {LLM_MODEL} overloaded/rate-limited. Switching to fallback...")
+                try:
+                    response = call_llm(FALLBACK_MODEL)
+                    return response.choices[0].message.content
+                except Exception as e2:
+                    return f"Error using fallback model: {e2}"
+            else:
+                 return f"Error calling OpenRouter: {e}"
 
     def query(self, user_question):
         trace_id = str(uuid.uuid4())
