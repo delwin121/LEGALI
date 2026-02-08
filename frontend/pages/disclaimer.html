@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Legali - AI Search</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#196ee6",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#111821",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-[#111418] dark:text-white font-display min-h-screen flex flex-col overflow-x-hidden">
+    <!-- Top Navigation Bar -->
+    <header
+        class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e5e7eb] dark:border-[#2f3842] bg-white dark:bg-[#1a222e] px-4 md:px-10 py-3 shadow-sm">
+        <div class="flex items-center gap-3 text-[#111418] dark:text-white cursor-pointer">
+            <div class="size-8 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined !text-[32px]">balance</span>
+            </div>
+            <h2 class="text-xl font-bold leading-tight tracking-[-0.015em]">Legali</h2>
+        </div>
+        <div class="flex items-center gap-4">
+            <button
+                class="hidden md:flex items-center gap-2 text-sm font-medium text-[#637288] dark:text-[#9ca3af] hover:text-primary dark:hover:text-primary transition-colors">
+                <span class="material-symbols-outlined !text-[20px]">history</span>
+                Recent
+            </button>
+            <button
+                class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-9 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-blue-600 transition-colors shadow-md shadow-blue-500/20">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined !text-[18px]">add</span>
+                    <span class="truncate">New Search</span>
+                </span>
+            </button>
+            <div class="size-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden ml-2 cursor-pointer"
+                data-alt="User profile avatar placeholder with abstract gradient"
+                style="background-image: linear-gradient(135deg, #196ee6 0%, #a855f7 100%);"></div>
+        </div>
+    </header>
+    <!-- Main Content Area -->
+    <div class="flex flex-1 justify-center py-8 px-4 md:px-6">
+        <div class="flex flex-col max-w-[960px] w-full gap-6">
+            <!-- Search Query Section -->
+            <div class="flex flex-col gap-2 p-2">
+                <div class="flex items-start gap-3">
+                    <div class="mt-1 min-w-[24px] text-[#637288] dark:text-[#9ca3af]">
+                        <span class="material-symbols-outlined">search</span>
+                    </div>
+                    <div>
+                        <h1
+                            class="text-[#111418] dark:text-white tracking-tight text-2xl md:text-[32px] font-bold leading-tight">
+                            What is the punishment for theft under the new Bharatiya Nyaya Sanhita?
+                        </h1>
+                        <p class="text-[#637288] dark:text-[#9ca3af] text-sm font-medium leading-normal mt-2">
+                            Searching BNS 2023, BNSS 2023, BSA 2023 • 4 sources identified
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading / Status Indicator -->
+            <div class="flex flex-col gap-3 px-2">
+                <div class="flex gap-4 items-center justify-between">
+                    <div class="flex items-center gap-2 text-primary animate-pulse">
+                        <span class="material-symbols-outlined !text-[18px] animate-spin">sync</span>
+                        <p class="text-sm font-semibold leading-normal">Fetching verified answer...</p>
+                    </div>
+                    <p class="text-[#637288] dark:text-[#9ca3af] text-xs font-medium leading-normal">70% Verified</p>
+                </div>
+                <div class="rounded-full bg-[#dce0e5] dark:bg-[#2f3842] h-1.5 overflow-hidden">
+                    <div class="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                        style="width: 70%;"></div>
+                </div>
+                <p class="text-[#637288] dark:text-[#9ca3af] text-xs font-normal leading-normal italic text-right">
+                    Cross-referencing Section 303 with historical precedents...</p>
+            </div>
+            <!-- Main Answer Block -->
+            <div
+                class="bg-white dark:bg-[#1a222e] rounded-xl border border-[#e5e7eb] dark:border-[#2f3842] p-6 md:p-8 shadow-sm">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="size-6 rounded bg-primary/10 flex items-center justify-center text-primary">
+                        <span class="material-symbols-outlined !text-[16px]">auto_awesome</span>
+                    </div>
+                    <span class="text-xs font-bold text-primary uppercase tracking-wider">AI Legal Analysis</span>
+                </div>
+                <div class="prose dark:prose-invert max-w-none">
+                    <p class="text-[#111418] dark:text-gray-100 text-lg leading-relaxed font-normal">
+                        Under the <span class="font-semibold text-primary">Bharatiya Nyaya Sanhita (BNS), 2023</span>,
+                        theft is primarily defined and penalized under <span
+                            class="font-semibold border-b-2 border-primary/20 hover:border-primary cursor-pointer transition-colors">Section
+                            303</span>. This section consolidates provisions related to theft that were previously
+                        scattered in the IPC.
+                    </p>
+                    <p class="text-[#111418] dark:text-gray-100 text-lg leading-relaxed font-normal mt-4">
+                        The punishment structure is as follows:
+                    </p>
+                    <ul class="list-disc pl-5 mt-3 space-y-2 text-[#344054] dark:text-gray-300">
+                        <li><strong class="text-[#111418] dark:text-white">General Theft (Section 303(2)):</strong>
+                            Imprisonment for a term which may extend to 3 years, or with fine, or with both.</li>
+                        <li><strong class="text-[#111418] dark:text-white">Subsequent Conviction:</strong> In cases of
+                            repeat offenders, the imprisonment may extend to 5 years along with a fine.</li>
+                        <li><strong class="text-[#111418] dark:text-white">Snatching (Section 304):</strong> A new
+                            specific classification often related to theft, punishable with imprisonment up to 3 years.
+                        </li>
+                    </ul>
+                </div>
+                <!-- Action Bar -->
+                <div class="flex items-center gap-2 mt-8 pt-4 border-t border-[#f0f2f4] dark:border-[#2f3842]">
+                    <button
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-background-light dark:hover:bg-[#2f3842] text-[#637288] dark:text-[#9ca3af] text-sm font-medium transition-colors">
+                        <span class="material-symbols-outlined !text-[18px]">content_copy</span> Copy
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-background-light dark:hover:bg-[#2f3842] text-[#637288] dark:text-[#9ca3af] text-sm font-medium transition-colors">
+                        <span class="material-symbols-outlined !text-[18px]">share</span> Share
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-background-light dark:hover:bg-[#2f3842] text-[#637288] dark:text-[#9ca3af] text-sm font-medium transition-colors ml-auto">
+                        <span class="material-symbols-outlined !text-[18px]">thumb_up</span> Helpful
+                    </button>
+                    <button
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-md hover:bg-background-light dark:hover:bg-[#2f3842] text-[#637288] dark:text-[#9ca3af] text-sm font-medium transition-colors">
+                        <span class="material-symbols-outlined !text-[18px]">thumb_down</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Citations Section Header -->
+            <div class="flex items-center justify-between px-2 pt-4">
+                <h3 class="text-[#111418] dark:text-white text-lg font-bold leading-tight flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">gavel</span>
+                    Legal Citations / Sources
+                </h3>
+                <button class="text-sm text-primary font-medium hover:underline">View all sources</button>
+            </div>
+            <!-- Citations Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-12">
+                <!-- Card 1 -->
+                <div
+                    class="group flex flex-col justify-between rounded-lg border border-[#e5e7eb] dark:border-[#2f3842] bg-white dark:bg-[#1a222e] p-5 hover:border-primary dark:hover:border-primary hover:shadow-lg transition-all cursor-pointer">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span
+                                class="bg-[#eef6ff] dark:bg-blue-900/30 text-primary text-xs font-bold px-2 py-1 rounded border border-blue-100 dark:border-blue-800">
+                                ACT
+                            </span>
+                            <div class="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-bold">
+                                <span class="material-symbols-outlined !text-[16px]">verified</span>
+                                Verified
+                            </div>
+                        </div>
+                        <h4 class="text-primary text-xl font-bold mb-1">BNS 2023</h4>
+                        <p
+                            class="text-[#637288] dark:text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-2">
+                            Chapter XVII • Offences Against Property</p>
+                        <div class="h-px bg-gray-100 dark:bg-[#2f3842] my-3"></div>
+                        <p class="text-[#111418] dark:text-gray-100 font-bold text-lg mb-1">Section 303</p>
+                        <p class="text-[#637288] dark:text-[#9ca3af] text-sm line-clamp-2">
+                            Defines the offence of theft and prescribes punishments for general theft, dwelling house
+                            theft, and theft by servants.
+                        </p>
+                    </div>
+                    <div
+                        class="mt-4 pt-3 flex items-center justify-end border-t border-transparent group-hover:border-gray-100 dark:group-hover:border-[#2f3842] transition-colors">
+                        <span
+                            class="text-primary text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read Full Text <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </span>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="group flex flex-col justify-between rounded-lg border border-[#e5e7eb] dark:border-[#2f3842] bg-white dark:bg-[#1a222e] p-5 hover:border-primary dark:hover:border-primary hover:shadow-lg transition-all cursor-pointer">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span
+                                class="bg-[#eef6ff] dark:bg-blue-900/30 text-primary text-xs font-bold px-2 py-1 rounded border border-blue-100 dark:border-blue-800">
+                                ACT
+                            </span>
+                            <div class="flex items-center gap-1 text-green-600 dark:text-green-400 text-xs font-bold">
+                                <span class="material-symbols-outlined !text-[16px]">verified</span>
+                                Verified
+                            </div>
+                        </div>
+                        <h4 class="text-primary text-xl font-bold mb-1">BNS 2023</h4>
+                        <p
+                            class="text-[#637288] dark:text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-2">
+                            Chapter XVII • Offences Against Property</p>
+                        <div class="h-px bg-gray-100 dark:bg-[#2f3842] my-3"></div>
+                        <p class="text-[#111418] dark:text-gray-100 font-bold text-lg mb-1">Section 305</p>
+                        <p class="text-[#637288] dark:text-[#9ca3af] text-sm line-clamp-2">
+                            Specific provisions regarding theft in a dwelling house, or means of transportation or place
+                            of worship.
+                        </p>
+                    </div>
+                    <div
+                        class="mt-4 pt-3 flex items-center justify-end border-t border-transparent group-hover:border-gray-100 dark:group-hover:border-[#2f3842] transition-colors">
+                        <span
+                            class="text-primary text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read Full Text <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </span>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="group flex flex-col justify-between rounded-lg border border-[#e5e7eb] dark:border-[#2f3842] bg-white dark:bg-[#1a222e] p-5 hover:border-primary dark:hover:border-primary hover:shadow-lg transition-all cursor-pointer">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span
+                                class="bg-gray-100 dark:bg-gray-800 text-[#637288] dark:text-gray-300 text-xs font-bold px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
+                                RELATED ACT
+                            </span>
+                        </div>
+                        <h4 class="text-[#111418] dark:text-white text-xl font-bold mb-1">BNSS 2023</h4>
+                        <p
+                            class="text-[#637288] dark:text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-2">
+                            Chapter V • Arrest of Persons</p>
+                        <div class="h-px bg-gray-100 dark:bg-[#2f3842] my-3"></div>
+                        <p class="text-[#111418] dark:text-gray-100 font-bold text-lg mb-1">Section 41</p>
+                        <p class="text-[#637288] dark:text-[#9ca3af] text-sm line-clamp-2">
+                            When police may arrest without warrant. Relevant for cognizable theft offences.
+                        </p>
+                    </div>
+                    <div
+                        class="mt-4 pt-3 flex items-center justify-end border-t border-transparent group-hover:border-gray-100 dark:group-hover:border-[#2f3842] transition-colors">
+                        <span
+                            class="text-[#111418] dark:text-white text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read Full Text <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </span>
+                    </div>
+                </div>
+                <!-- Card 4 -->
+                <div
+                    class="group flex flex-col justify-between rounded-lg border border-[#e5e7eb] dark:border-[#2f3842] bg-white dark:bg-[#1a222e] p-5 hover:border-primary dark:hover:border-primary hover:shadow-lg transition-all cursor-pointer">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span
+                                class="bg-gray-100 dark:bg-gray-800 text-[#637288] dark:text-gray-300 text-xs font-bold px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
+                                RELATED ACT
+                            </span>
+                        </div>
+                        <h4 class="text-[#111418] dark:text-white text-xl font-bold mb-1">BSA 2023</h4>
+                        <p
+                            class="text-[#637288] dark:text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-2">
+                            Chapter IV • Oral Evidence</p>
+                        <div class="h-px bg-gray-100 dark:bg-[#2f3842] my-3"></div>
+                        <p class="text-[#111418] dark:text-gray-100 font-bold text-lg mb-1">Section 61</p>
+                        <p class="text-[#637288] dark:text-[#9ca3af] text-sm line-clamp-2">
+                            Admissibility of electronic records. Relevant for digital theft evidence.
+                        </p>
+                    </div>
+                    <div
+                        class="mt-4 pt-3 flex items-center justify-end border-t border-transparent group-hover:border-gray-100 dark:group-hover:border-[#2f3842] transition-colors">
+                        <span
+                            class="text-[#111418] dark:text-white text-sm font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Read Full Text <span class="material-symbols-outlined !text-[16px]">arrow_forward</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../app.js"></script>
+</body>
+
+</html>

@@ -35,24 +35,33 @@ legal assistant designed to explain India's 2023 criminal law framework
 - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 - [Ollama](https://ollama.com/) (if running local LLM)
 
-### Installation & Running (Docker)
+### Installation & Running (Quick Start)
 
-The easiest way to run Vidhi-Sahayak is using Docker Compose.
+The easiest way to run Vidhi-Sahayak is using the provided startup script, which launches both the backend API and the frontend.
 
 1.  **Clone the repository:**
-
     ```bash
     git clone https://github.com/yourusername/vidhi-sahayak.git
     cd vidhi-sahayak
     ```
 
-2.  **Build and run the container:**
+2.  **Run the startup script:**
+    ```bash
+    ./startup.sh
+    ```
 
+    This will start:
+    - Backend API at `http://localhost:8000`
+    - Frontend Application at `http://localhost:8080/pages/index.html`
+
+    Open `http://localhost:8080/pages/index.html` in your browser to start using the application.
+
+### Running with Docker
+
+1.  **Build and run the container:**
     ```bash
     docker compose up --build
     ```
-
-    This will start the backend service.
 
 ### Local Development
 

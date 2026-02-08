@@ -10,10 +10,21 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from backend.app.rag import LegalRAG
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="LEGALI API",
     description="API for Indian Criminal Law RAG System",
     version="1.0.0"
+)
+
+# Allow CORS for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Initialize RAG System
@@ -36,6 +47,7 @@ class Citation(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     citations: List[Citation]
+    suggested_questions: List[str] = []
     debug_metadata: Dict[str, Any]
 
 class ErrorResponse(BaseModel):
@@ -57,8 +69,15 @@ def query_rag(request: QueryRequest):
         
         if "error" in result:
             # Start returning 400 for logic errors (validation failed etc)
+            # Map internal status to HTTP codes
+            status_code = 400
+            if result.get("status") in ["LLM_RATE_LIMIT", "LLM_QUOTA_EXCEEDED", "LLM_PROVIDER_ERROR", "LLM_UNKNOWN_ERROR"]:
+                status_code = 503
+            elif result.get("status") == "VALIDATION_FAILED":
+                status_code = 422
+            
             raise HTTPException(
-                status_code=400, 
+                status_code=status_code, 
                 detail={
                     "error": result["error"],
                     "reason": result.get("reason"),
