@@ -1,11 +1,11 @@
-# Vidhi-Sahayak
+# LEGALI
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-Vidhi-Sahayak is an offline, Retrieval-Augmented Generation (RAG) based
+LEGALI is an offline, Retrieval-Augmented Generation (RAG) based
 legal assistant designed to explain India's 2023 criminal law framework
-(BNS, BNSS, BSA) using authoritative statutory text.
+(BNS, BNSS, BSA and more) using authoritative statutory text.
 
 ## Features
 
