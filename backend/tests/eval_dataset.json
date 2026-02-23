@@ -1,0 +1,27 @@
+[
+    {
+        "question": "What is the punishment for murder?",
+        "ground_truth": "The punishment for murder is death or imprisonment for life, and shall also be liable to fine.",
+        "expected_act": "Bharatiya Nyaya Sanhita"
+    },
+    {
+        "question": "What is the definition of a child under specific Indian laws?",
+        "ground_truth": "A child means a person below the age of eighteen years.",
+        "expected_act": "POCSO"
+    },
+    {
+        "question": "Is electronic signature legally recognized same as paper records?",
+        "ground_truth": "Yes, electronic signatures are legally recognized under the IT Act, satisfying the requirement of information or matter being in written or printed form.",
+        "expected_act": "Information Technology Act"
+    },
+    {
+        "question": "What are the powers of a Magistrate regarding ordering someone to give security for keeping the peace?",
+        "ground_truth": "When an Executive Magistrate receives information that a person is likely to commit a breach of the peace, they may require such person to show cause why they should not be ordered to execute a bond for keeping the peace for a period not exceeding one year.",
+        "expected_act": "Bharatiya Nagarik Suraksha Sanhita"
+    },
+    {
+        "question": "Does documentary evidence include electronic records under the new evidence act?",
+        "ground_truth": "Yes, 'document' includes any electronic record. Documentary evidence means all documents including electronic records produced for the inspection of the Court.",
+        "expected_act": "Bharatiya Sakshya Adhiniyam"
+    }
+]

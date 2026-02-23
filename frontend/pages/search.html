@@ -59,6 +59,56 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+
+        /* Chips */
+        .suggested-chip {
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .suggested-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .suggested-chip:active {
+            transform: translateY(0);
+        }
+
+        /* Tabs */
+        .tab-btn {
+            position: relative;
+            outline: none;
+        }
+
+        /* Active state underline handled by border-b-2 utility but let's add hover transition */
+
+        /* Scrollbar Hide */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
     </style>
 </head>
 
@@ -121,161 +171,93 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col items-center pt-6 pb-12 px-4 md:px-6">
         <div class="w-full max-w-[960px] flex flex-col gap-6">
-            <!-- Common Questions Chips -->
-            <section aria-label="Related Questions">
-                <h3 class="sr-only">Common Questions</h3>
-                <div class="flex flex-wrap gap-3">
-                    <button
-                        class="suggested-chip group flex h-9 items-center justify-center gap-2 rounded-lg bg-white dark:bg-[#1a222d] border border-gray-200 dark:border-gray-700 px-4 transition-all hover:border-primary/50 hover:bg-primary/5 active:bg-primary/10"
-                        data-query="What is the bail provision in BNSS?">
-                        <span class="material-symbols-outlined text-primary text-lg">search</span>
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">What
-                            is the bail provision in BNSS?</span>
-                    </button>
-                    <button
-                        class="suggested-chip group flex h-9 items-center justify-center gap-2 rounded-lg bg-white dark:bg-[#1a222d] border border-gray-200 dark:border-gray-700 px-4 transition-all hover:border-primary/50 hover:bg-primary/5 active:bg-primary/10"
-                        data-query="Cognizable vs Non-cognizable offenses?">
-                        <span class="material-symbols-outlined text-primary text-lg">search</span>
-                        <span
-                            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Cognizable
-                            vs Non-cognizable offenses?</span>
-                    </button>
-                    <button
-                        class="suggested-chip group flex h-9 items-center justify-center gap-2 rounded-lg bg-white dark:bg-[#1a222d] border border-gray-200 dark:border-gray-700 px-4 transition-all hover:border-primary/50 hover:bg-primary/5 active:bg-primary/10"
-                        data-query="Latest amendments 2023">
-                        <span class="material-symbols-outlined text-primary text-lg">search</span>
-                        <span
-                            class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-primary">Latest
-                            amendments 2023</span>
-                    </button>
+
+            <!-- 1. Suggested Questions (Chips) -->
+            <section aria-label="Related Questions" id="suggestedQuestionsContainer"
+                class="w-full overflow-x-auto pb-2 scrollbar-hide">
+                <div class="flex flex-nowrap gap-3" id="suggestedQuestionsList">
+                    <!-- Chips inserted via JS -->
+                    <div class="animate-pulse flex gap-3">
+                        <div class="h-9 w-32 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                        <div class="h-9 w-40 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                        <div class="h-9 w-24 bg-gray-200 dark:bg-gray-800 rounded-lg"></div>
+                    </div>
                 </div>
             </section>
-            <!-- Main Answer Section -->
+
+            <!-- 2. Main Results Wrapper -->
             <section
-                class="flex flex-col rounded-xl bg-white dark:bg-[#1a222d] border border-gray-200 dark:border-gray-800 overflow-hidden shadow-sm">
-                <!-- Meta Header -->
-                <div
-                    class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-6 py-3 bg-gray-50/50 dark:bg-[#1a222d]">
-                    <div class="flex items-center gap-2 text-primary">
-                        <span class="material-symbols-outlined" style="font-size: 20px;">auto_awesome</span>
-                        <span class="text-xs font-semibold tracking-wide uppercase">AI-Generated Summary • High
-                            Confidence</span>
-                    </div>
-                    <div class="flex gap-2">
-                        <button id="copyButton"
-                            class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500" title="Copy">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">content_copy</span>
-                        </button>
-                        <button id="shareButton"
-                            class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500" title="Share">
-                            <span class="material-symbols-outlined" style="font-size: 18px;">share</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- Content Body -->
-                <div id="answerContent" class="p-6 md:p-8">
-                    <!-- Placeholder content removed/hidden via JS or empty initially -->
-                    <div class="animate-pulse flex flex-col gap-4">
-                        <div class="h-6 bg-gray-200 rounded w-3/4"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full"></div>
-                        <div class="h-4 bg-gray-200 rounded w-5/6"></div>
-                        <div class="h-4 bg-gray-200 rounded w-4/6"></div>
-                    </div>
-                </div>
-                <!-- Actions Footer -->
-                <div
-                    class="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
-                    <button id="thumbsUp"
-                        class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">thumb_up</span>
-                        Helpful
-                    </button>
-                    <button id="thumbsDown"
-                        class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-500 flex items-center gap-1">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">thumb_down</span>
-                        Not Helpful
-                    </button>
-                </div>
-            </section>
-            <!-- Legal Citations Panel -->
-            <section id="citationsSection" class="flex flex-col gap-4">
-                <div class="flex items-center justify-between px-1">
-                    <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">gavel</span>
-                        Legal Citations
-                    </h3>
-                    <button id="viewSources" class="text-sm font-medium text-primary hover:underline">View all
-                        sources</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Citation Card 1 -->
-                    <div
-                        class="group relative flex flex-col justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a222d] p-4 transition-all hover:border-primary hover:shadow-md cursor-pointer">
-                        <div class="mb-3">
-                            <div class="flex items-start justify-between mb-2">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-2 py-1 text-xs font-bold text-primary ring-1 ring-inset ring-blue-700/10">BNSS
-                                    2023</span>
-                                <span
-                                    class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors"
-                                    style="font-size: 20px;">open_in_new</span>
-                            </div>
-                            <h4
-                                class="font-bold text-gray-900 dark:text-white text-lg group-hover:text-primary transition-colors">
-                                Section 35</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Arrest of persons</p>
+                class="flex flex-col rounded-xl bg-white dark:bg-[#1a222d] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+
+                <!-- Tab Navigation & Meta Header -->
+                <div class="border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#1a222d]">
+                    <div class="flex items-center justify-between px-6 py-3">
+                        <div class="flex space-x-6">
+                            <button id="tabAnswer" onclick="switchTab('answer')"
+                                class="tab-btn text-sm font-bold text-primary border-b-2 border-primary pb-3 -mb-3.5 transition-colors">
+                                Answer
+                            </button>
+                            <button id="tabCitations" onclick="switchTab('citations')"
+                                class="tab-btn text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 pb-3 -mb-3.5 transition-colors">
+                                Citations
+                            </button>
                         </div>
-                        <div class="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <p class="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-                                Chapter V</p>
+
+                        <div class="flex gap-2">
+                            <div class="flex items-center gap-2 text-primary mr-4 hidden md:flex">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">auto_awesome</span>
+                                <span class="text-xs font-semibold tracking-wide uppercase">AI Summary</span>
+                            </div>
+                            <button id="copyButton"
+                                class="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-500"
+                                title="Copy">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">content_copy</span>
+                            </button>
                         </div>
                     </div>
-                    <!-- Citation Card 2 -->
-                    <div
-                        class="group relative flex flex-col justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a222d] p-4 transition-all hover:border-primary hover:shadow-md cursor-pointer">
-                        <div class="mb-3">
-                            <div class="flex items-start justify-between mb-2">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900/30 px-2 py-1 text-xs font-bold text-primary ring-1 ring-inset ring-blue-700/10">BNSS
-                                    2023</span>
-                                <span
-                                    class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors"
-                                    style="font-size: 20px;">open_in_new</span>
-                            </div>
-                            <h4
-                                class="font-bold text-gray-900 dark:text-white text-lg group-hover:text-primary transition-colors">
-                                Section 41A</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Notice of appearance before police
+                </div>
+
+                <!-- Tab Content Area -->
+                <div class="p-6 md:p-8 min-h-[200px]">
+
+                    <!-- Panel A: Answer -->
+                    <div id="answerPanel" class="animate-fadeIn">
+                        <div
+                            class="prose prose-slate dark:prose-invert max-w-none text-base leading-7 text-gray-700 dark:text-gray-300">
+                            <p id="streamingText" class="mb-4">
+                                <!-- Stream content here -->
+                                <span class="animate-pulse text-gray-400">Thinking...</span>
                             </p>
                         </div>
-                        <div class="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <p class="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-                                Chapter V</p>
+                    </div>
+
+                    <!-- Panel B: Citations (Hidden by default) -->
+                    <div id="citationsPanel" class="hidden animate-fadeIn">
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-4">Sources Used</h3>
+                        <div id="citationsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Cards inserted via JS -->
+                            <p class="text-gray-500 italic">No citations available.</p>
                         </div>
                     </div>
-                    <!-- Citation Card 3 -->
-                    <div
-                        class="group relative flex flex-col justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a222d] p-4 transition-all hover:border-primary hover:shadow-md cursor-pointer">
-                        <div class="mb-3">
-                            <div class="flex items-start justify-between mb-2">
-                                <span
-                                    class="inline-flex items-center rounded-md bg-purple-50 dark:bg-purple-900/30 px-2 py-1 text-xs font-bold text-purple-600 dark:text-purple-400 ring-1 ring-inset ring-purple-700/10">BNS
-                                    2023</span>
-                                <span
-                                    class="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors"
-                                    style="font-size: 20px;">open_in_new</span>
-                            </div>
-                            <h4
-                                class="font-bold text-gray-900 dark:text-white text-lg group-hover:text-primary transition-colors">
-                                Section 102</h4>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Punishment for non-compliance</p>
-                        </div>
-                        <div class="mt-auto pt-3 border-t border-gray-100 dark:border-gray-800">
-                            <p class="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wide">
-                                Chapter IV</p>
-                        </div>
+
+                </div>
+
+                <!-- Footer / Feedback -->
+                <div
+                    class="px-6 py-3 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                    <p class="text-xs text-gray-400">Generated by Legali AI. Not legal advice.</p>
+                    <div class="flex gap-3">
+                        <button
+                            class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary flex items-center gap-1">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">thumb_up</span>
+                        </button>
+                        <button
+                            class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-red-500 flex items-center gap-1">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">thumb_down</span>
+                        </button>
                     </div>
                 </div>
+
             </section>
         </div>
     </main>

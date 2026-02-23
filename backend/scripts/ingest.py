@@ -2,103 +2,118 @@ import chromadb
 import json
 import os
 from pathlib import Path
+from sentence_transformers import SentenceTransformer
 
 # Config
 DATA_DIR = Path("backend/data/final")
-CHUNKS_FILE = DATA_DIR / "legali_ready_v2.json"
-VECTORS_FILE = DATA_DIR / "legali_vectors_v2.json"
 DB_DIR = Path("backend/data/chroma_db")
 COLLECTION_NAME = "legali_corpus"
+EMBEDDING_MODEL = "BAAI/bge-base-en-v1.5"
 
 def ingest():
-    # 1. Validation
-    if not CHUNKS_FILE.exists() or not VECTORS_FILE.exists():
-        print("Error: Missing input files (chunks or vectors).")
-        return
-
     print(f"Initializing ChromaDB in {DB_DIR}...")
-    # Initialize persistent client
     client = chromadb.PersistentClient(path=str(DB_DIR))
     
-    # Get or create collection
-    # We use cosine similarity space (Metadata says "model encoded").
-    # BGE uses cosine.
     collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
         metadata={"hnsw:space": "cosine"}
     )
     
-    # 2. Load Data
-    print("Loading data...")
-    with open(CHUNKS_FILE, 'r', encoding='utf-8') as f:
-        chunks = json.load(f)
-    with open(VECTORS_FILE, 'r', encoding='utf-8') as f:
-        vectors_data = json.load(f)
-        
-    # Map vectors by ID
-    # vectors_data = { meta: ..., data: [ {id, vector}, ... ] }
-    vec_map = {item['id']: item['vector'] for item in vectors_data['data']}
+    # 1. Load All Chunks
+    print("Scanning for chunk files...")
+    chunks = []
+    for filename in os.listdir(DATA_DIR):
+        if filename.endswith("_ready.json") or filename.endswith("_ready_v2.json"):
+            filepath = DATA_DIR / filename
+            print(f"Loading chunks from: {filename}")
+            with open(filepath, 'r', encoding='utf-8') as f:
+                chunks.extend(json.load(f))
+                
+    # 2. Load Pre-Computed Vectors (If Available)
+    vec_map = {}
+    print("Scanning for vector caches...")
+    for filename in os.listdir(DATA_DIR):
+        if "vectors" in filename and filename.endswith(".json"):
+            filepath = DATA_DIR / filename
+            print(f"Loading vector cache from: {filename}")
+            try:
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    vectors_data = json.load(f)
+                    if 'data' in vectors_data:
+                        for item in vectors_data['data']:
+                            vec_map[item['id']] = item['vector']
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
+                
+    print(f"Total Chunks Loaded: {len(chunks)}")
+    print(f"Cached Vectors Found: {len(vec_map)}")
     
-    print(f"Loaded {len(chunks)} chunks and {len(vec_map)} vectors.")
-    
-    # 3. Prepare Batch
+    # 3. Separate Cached vs Missing Vectors
     ids = []
     documents = []
     embeddings = []
     metadatas = []
     
-    missing_vecs = 0
+    missing_chunks = []
     
     for chunk in chunks:
         cid = chunk['id']
         vector = vec_map.get(cid)
         
-        if vector is None:
-            missing_vecs += 1
-            print(f"Warning: No vector found for {cid}")
-            continue
-            
-        ids.append(cid)
-        documents.append(chunk['text'])
-        embeddings.append(vector)
-        
-        # Metadata
-        # We store structure info for filtering
         meta = {
-            "act": chunk['act'],
-            "chapter": chunk['chapter'],
-            "section_number": chunk['number'], # integer
-            "title": chunk['title'],
-            "chunk_index": chunk['chunk_index']
+            "act": str(chunk.get('act', '')),
+            "chapter": str(chunk.get('chapter', '')),
+            "section_number": str(chunk.get('number', '')),
+            "title": str(chunk.get('title', '')),
+            "chunk_index": int(chunk.get('chunk_index', 0))
         }
-        metadatas.append(meta)
         
-    if missing_vecs > 0:
-        print(f"Skipping {missing_vecs} chunks due to missing vectors.")
+        if vector is None:
+            missing_chunks.append((cid, chunk['text'], meta))
+        else:
+            ids.append(cid)
+            documents.append(chunk['text'])
+            embeddings.append(vector)
+            metadatas.append(meta)
+            
+    # 4. Dynamically Encode Missing Chunks
+    if missing_chunks:
+        print(f"Generating embeddings dynamically for {len(missing_chunks)} unseen chunks...")
+        embedder = SentenceTransformer(EMBEDDING_MODEL)
         
-    # 4. Upsert to DB
-    # Chroma handles batching, but for 1200 it's fine to do in one go or blocks of 100.
-    # Let's do batches of 100 to be safe/show progress.
+        texts_to_encode = [f"Represent this sentence for searching relevant passages: {c[1]}" for c in missing_chunks]
+        new_vecs = embedder.encode(texts_to_encode, normalize_embeddings=True, show_progress_bar=True).tolist()
+        
+        for i, (cid, text, meta) in enumerate(missing_chunks):
+            ids.append(cid)
+            documents.append(text)
+            embeddings.append(new_vecs[i])
+            metadatas.append(meta)
+            
+    # 5. Upsert to ChromaDB in Batches
+    if not ids:
+        print("No data to ingest.")
+        return
+        
     batch_size = 100
     total = len(ids)
-    print(f"Ingesting {total} items into ChromaDB...")
+    print(f"Executing batch up-sert for {total} elements...")
     
     for i in range(0, total, batch_size):
         end = min(i + batch_size, total)
-        print(f"Upserting batch {i} to {end}...")
-        collection.upsert(
-            ids=ids[i:end],
-            embeddings=embeddings[i:end],
-            documents=documents[i:end],
-            metadatas=metadatas[i:end]
-        )
-        
-    print("Ingestion complete.")
-    print(f"DB persisted at: {DB_DIR}")
-    
-    # Verify count
+        print(f"Upserting batch {i} -> {end}...")
+        try:
+            collection.upsert(
+                ids=ids[i:end],
+                embeddings=embeddings[i:end],
+                documents=documents[i:end],
+                metadatas=metadatas[i:end]
+            )
+        except Exception as e:
+            print(f"Batch Upsert Error on {i}->{end}: {e}")
+            
     count = collection.count()
-    print(f"Total documents in collection: {count}")
+    print(f"\nIngestion Complete! Vector Database contains [{count}] items.")
 
 if __name__ == "__main__":
     ingest()

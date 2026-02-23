@@ -8,3 +8,6 @@ fastapi
 uvicorn
 openai
 python-dotenv
+rank_bm25
+nltk
+pypdf

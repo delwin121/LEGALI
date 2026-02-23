@@ -146,13 +146,10 @@ def process_corpus():
         # 1. Break into smallest legal units (Atoms)
         atoms = recursive_split(text)
         
-        # 2. Merge into optimal chunks
-        chunks_text = merge_chunks(atoms)
-        
-        # 3. Create objects
-        # ID format: ACT-NUM-INDEX
-        for idx, chunk_txt in enumerate(chunks_text, 1):
+        # 2. Contextual Prepending for Each Atom (1 atom = 1 chunk)
+        for idx, atom_txt in enumerate(atoms, 1):
             chunk_id = f"{item['act']}-{item['number']}-{idx}"
+            chunk_text = f"ACT: {item['act']} | SECTION: {item['number']} - {item['title']}\n{atom_txt}"
             
             chunk_obj = {
                 "id": chunk_id,
@@ -161,7 +158,7 @@ def process_corpus():
                 "number": item['number'],
                 "title": item['title'],
                 "chunk_index": idx,
-                "text": chunk_txt
+                "text": chunk_text
             }
             final_output.append(chunk_obj)
             
